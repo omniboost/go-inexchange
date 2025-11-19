@@ -26,8 +26,8 @@ const (
 var (
 	BaseURL = url.URL{
 		Scheme: "https",
-		Host:   "eu1.api.uat.development.abovecloud.io",
-		Path:   "",
+		Host:   "testapi.inexchange.se",
+		Path:   "/v1/api/",
 	}
 )
 
@@ -58,6 +58,9 @@ type Client struct {
 	debug   bool
 	baseURL url.URL
 
+	// credentials
+	clientToken string
+
 	// User agent for client
 	userAgent string
 
@@ -86,6 +89,14 @@ func (c *Client) BaseURL() url.URL {
 
 func (c *Client) SetBaseURL(baseURL url.URL) {
 	c.baseURL = baseURL
+}
+
+func (c *Client) ClientToken() string {
+	return c.clientToken
+}
+
+func (c *Client) SetClientToken(clientToken string) {
+	c.clientToken = clientToken
 }
 
 func (c *Client) SetMediaType(mediaType string) {
@@ -175,6 +186,8 @@ func (c *Client) NewRequest(ctx context.Context, req Request) (*http.Request, er
 	r.Header.Add("Content-Type", fmt.Sprintf("%s; charset=%s", c.MediaType(), c.Charset()))
 	r.Header.Add("Accept", c.MediaType())
 	r.Header.Add("User-Agent", c.UserAgent())
+	r.Header.Add("User-Agent", c.UserAgent())
+	r.Header.Add("ClientToken", c.ClientToken())
 
 	return r, nil
 }
@@ -182,7 +195,7 @@ func (c *Client) NewRequest(ctx context.Context, req Request) (*http.Request, er
 // Do sends an Client request and returns the Client response. The Client response is json decoded and stored in the value
 // pointed to by v, or returned as an error if an Client error has occurred. If v implements the io.Writer interface,
 // the raw response will be written to v, without attempting to decode it.
-func (c *Client) Do(req *http.Request, responseBody interface{}) (*http.Response, error) {
+func (c *Client) Do(req *http.Request, responseBody any) (*http.Response, error) {
 	if c.debug {
 		dump, _ := httputil.DumpRequestOut(req, true)
 		log.Println(string(dump))
@@ -252,7 +265,7 @@ func (c *Client) Do(req *http.Request, responseBody interface{}) (*http.Response
 	return httpResp, nil
 }
 
-func (c *Client) Unmarshal(r io.Reader, vv []interface{}, optionalVv []interface{}) error {
+func (c *Client) Unmarshal(r io.Reader, vv []any, optionalVv []any) error {
 	if len(vv) == 0 && len(optionalVv) == 0 {
 		return nil
 	}
