@@ -45,7 +45,6 @@ func (p DocumentsOutboundListQueryParams) ToURLValues() (url.Values, error) {
 	encoder := utils.NewSchemaEncoder()
 	encoder.RegisterEncoder(Date{}, utils.EncodeSchemaMarshaler)
 	encoder.RegisterEncoder(DateTime{}, utils.EncodeSchemaMarshaler)
-	encoder.RegisterEncoder(CommaSeparatedQueryParam{}, utils.EncodeSchemaMarshaler)
 	params := url.Values{}
 
 	err := encoder.Encode(p, params)
@@ -132,7 +131,10 @@ func (r *DocumentsOutboundListRequest) NewResponseBody() *DocumentsOutboundListR
 	return &DocumentsOutboundListResponseBody{}
 }
 
-type DocumentsOutboundListResponseBody []SubsidiaryListItem
+type DocumentsOutboundListResponseBody struct {
+	Documents  Documents `json:"documents"`
+	TotalCount int       `json:"totalCount"`
+}
 
 func (r *DocumentsOutboundListRequest) URL() *url.URL {
 	u := r.client.GetEndpointURL("/documents/outbound/list", r.PathParams())
