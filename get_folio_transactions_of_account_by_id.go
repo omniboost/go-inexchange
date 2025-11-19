@@ -1,11 +1,11 @@
-package shiji
+package inexchange
 
 import (
 	"context"
 	"net/http"
 	"net/url"
 
-	"github.com/omniboost/go-shiji/utils"
+	"github.com/omniboost/go-inexchange/utils"
 )
 
 func (c *Client) NewGetFolioTransactionsOfAccountByIDRequest() GetFolioTransactionsOfAccountByIDRequest {

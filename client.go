@@ -1,4 +1,4 @@
-package shiji
+package inexchange
 
 import (
 	"bytes"
@@ -18,7 +18,7 @@ import (
 
 const (
 	libraryVersion = "0.0.1"
-	userAgent      = "go-shiji/" + libraryVersion
+	userAgent      = "go-inexchange/" + libraryVersion
 	mediaType      = "application/json"
 	charset        = "utf-8"
 )

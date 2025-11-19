@@ -1,4 +1,4 @@
-package shiji_test
+package inexchange_test
 
 import (
 	"context"

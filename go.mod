@@ -1,4 +1,4 @@
-module github.com/omniboost/go-shiji
+module github.com/omniboost/go-inexchange
 
 go 1.24.0
 

@@ -1,4 +1,4 @@
-package shiji_test
+package inexchange_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/omniboost/go-shiji"
+	"github.com/omniboost/go-inexchange"
 )
 
 func TestGetV0CompanyProfileByID(t *testing.T) {
@@ -16,7 +16,7 @@ func TestGetV0CompanyProfileByID(t *testing.T) {
 	req := client.NewGetV0CompanyProfileByIDRequest()
 	req.Headers().PropertyID = "f142d311-7fd8-46c8-afbe-6fd50c03244d"
 	req.PathParams().ID = "e5bd9019-3c49-42cd-8cc2-15d9e3ccf176"
-	req.QueryParams().Extend = shiji.CommaSeparatedQueryParam{"LocalExternalAccountReceivable"}
+	req.QueryParams().Extend = inexchange.CommaSeparatedQueryParam{"LocalExternalAccountReceivable"}
 
 	resp, err := req.Do(context.Background())
 	if err != nil {

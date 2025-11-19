@@ -1,4 +1,4 @@
-package shiji
+package inexchange
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/omniboost/go-shiji/utils"
+	"github.com/omniboost/go-inexchange/utils"
 )
 
 func (c *Client) NewGetCashieringFinalInvoiceContentByFolioIDRequest() GetCashieringFinalInvoiceContentByFolioIDRequest {

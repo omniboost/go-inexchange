@@ -1,4 +1,4 @@
-package shiji_test
+package inexchange_test
 
 import (
 	"context"
@@ -7,23 +7,23 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/omniboost/go-shiji"
+	"github.com/omniboost/go-inexchange"
 )
 
-func client() *shiji.Client {
+func client() *inexchange.Client {
 	clientID := os.Getenv("OAUTH_CLIENT_ID")
 	clientSecret := os.Getenv("OAUTH_CLIENT_SECRET")
 	tokenURL := os.Getenv("OAUTH_TOKEN_URL")
-	shijiBaseURL := os.Getenv("SHIJI_BASE_URL")
-	shijiTenant := os.Getenv("SHIJI_TENANT")
-	shijiUsername := os.Getenv("SHIJI_USERNAME")
-	shijiPassword := os.Getenv("SHIJI_PASSWORD")
+	inexchangeBaseURL := os.Getenv("INEXCHANGE_BASE_URL")
+	inexchangeTenant := os.Getenv("INEXCHANGE_TENANT")
+	inexchangeUsername := os.Getenv("INEXCHANGE_USERNAME")
+	inexchangePassword := os.Getenv("INEXCHANGE_PASSWORD")
 
-	oauthConfig := shiji.NewOauth2PasswordConfig()
+	oauthConfig := inexchange.NewOauth2PasswordConfig()
 	oauthConfig.ClientID = clientID
 	oauthConfig.ClientSecret = clientSecret
-	oauthConfig.Username = fmt.Sprintf("%s@%s", shijiUsername, shijiTenant)
-	oauthConfig.Password = shijiPassword
+	oauthConfig.Username = fmt.Sprintf("%s@%s", inexchangeUsername, inexchangeTenant)
+	oauthConfig.Password = inexchangePassword
 
 	// set alternative token url
 	if tokenURL != "" {
@@ -33,12 +33,12 @@ func client() *shiji.Client {
 	// get http client with automatic oauth logic
 	httpClient := oauthConfig.Client(context.Background())
 
-	client := shiji.NewClient(httpClient)
+	client := inexchange.NewClient(httpClient)
 	client.SetDebug(true)
 	client.SetDisallowUnknownFields(true)
 
-	if shijiBaseURL != "" {
-		u, err := url.Parse(shijiBaseURL)
+	if inexchangeBaseURL != "" {
+		u, err := url.Parse(inexchangeBaseURL)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -1,4 +1,4 @@
-package shiji
+package inexchange
 
 import (
 	"strings"
