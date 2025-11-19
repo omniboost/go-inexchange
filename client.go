@@ -14,6 +14,8 @@ import (
 	"net/url"
 	"path"
 	"strings"
+
+	"github.com/hashicorp/go-multierror"
 )
 
 const (
@@ -365,6 +367,16 @@ func CheckResponse(r *http.Response) error {
 	return errorResponse
 }
 
+func checkContentType(response *http.Response) error {
+	header := response.Header.Get("Content-Type")
+	contentType := strings.Split(header, ";")[0]
+	if contentType != mediaType {
+		return fmt.Errorf("Expected Content-Type \"%s\", got \"%s\"", mediaType, contentType)
+	}
+
+	return nil
+}
+
 type StatusErrorResponse struct {
 	// HTTP response that caused this error
 	Response *http.Response
@@ -378,48 +390,37 @@ func (r *StatusErrorResponse) Error() string {
 	return ""
 }
 
+//	{
+//	  "message": "The request is invalid.",
+//	  "modelState": {
+//	    "search.PartyId": [
+//	      "The PartyId field is required."
+//	    ]
+//	  }
+//	}
 type ErrorResponse struct {
 	// HTTP response that caused this error
 	Response *http.Response `json:"-"`
 
-	Code          string `json:"code"`
-	Message       string `json:"message"`
-	CorrelationID string `json:"correlationId"`
-	Details       []struct {
-		Code       string            `json:"code"`
-		Message    string            `json:"message"`
-		Parameters map[string]string `json:"parameters"`
-	} `json:"details"`
+	Message    string              `json:"message"`
+	ModelState map[string][]string `json:"modelState,omitempty"`
 }
 
 func (r *ErrorResponse) Error() string {
-	if r.Code != "" {
-		// Create message
-		message := fmt.Sprintf("%s: %s", r.Code, r.Message)
+	if r.Message == "" && len(r.ModelState) == 0 {
+		return ""
+	}
 
-		// Add every "details"
-		for _, detail := range r.Details {
-			message = fmt.Sprintf("%s\n * %s: %s", message, detail.Code, detail.Message)
+	var err *multierror.Error
+	if r.Message != "" {
+		err = multierror.Append(err, errors.New(r.Message))
+	}
+
+	for _, msgs := range r.ModelState {
+		for _, msg := range msgs {
+			err = multierror.Append(err, errors.New(msg))
 		}
-
-		return message
 	}
 
-	return ""
-}
-
-type Message struct {
-	MessageCode string `json:"message_code"`
-	MessageType string `json:"message_type"`
-	Message     string `json:"message"`
-}
-
-func checkContentType(response *http.Response) error {
-	header := response.Header.Get("Content-Type")
-	contentType := strings.Split(header, ";")[0]
-	if contentType != mediaType {
-		return fmt.Errorf("Expected Content-Type \"%s\", got \"%s\"", mediaType, contentType)
-	}
-
-	return nil
+	return err.Error()
 }
