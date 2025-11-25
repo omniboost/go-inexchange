@@ -2,6 +2,7 @@ package inexchange
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 
@@ -13,6 +14,7 @@ func (c *Client) NewDocumentsRequest() DocumentsRequest {
 		client:      c,
 		queryParams: c.NewDocumentsQueryParams(),
 		pathParams:  c.NewDocumentsPathParams(),
+		formParams:  c.NewDocumentsFormParams(),
 		method:      http.MethodPost,
 		headers:     c.NewDocumentsHeaders(),
 		requestBody: c.NewDocumentsRequestBody(),
@@ -23,6 +25,7 @@ type DocumentsRequest struct {
 	client      *Client
 	queryParams *DocumentsQueryParams
 	pathParams  *DocumentsPathParams
+	formParams  *DocumentsFormParams
 	method      string
 	headers     *DocumentsHeaders
 	requestBody DocumentsRequestBody
@@ -83,6 +86,36 @@ func (r *DocumentsRequest) PathParamsInterface() PathParams {
 	return r.pathParams
 }
 
+type DocumentsFormParams struct {
+	File FormFile
+}
+
+func (p DocumentsFormParams) IsMultiPart() bool {
+	return true
+}
+
+func (p DocumentsFormParams) Files() map[string]FormFile {
+	return map[string]FormFile{
+		"file": p.File,
+	}
+}
+
+func (p DocumentsFormParams) Values() url.Values {
+	return url.Values{}
+}
+
+func (c *Client) NewDocumentsFormParams() *DocumentsFormParams {
+	return &DocumentsFormParams{}
+}
+
+func (r *DocumentsRequest) FormParams() *DocumentsFormParams {
+	return r.formParams
+}
+
+func (r *DocumentsRequest) FormParamsInterface() Form {
+	return r.formParams
+}
+
 func (r *DocumentsRequest) SetMethod(method string) {
 	r.method = method
 }
@@ -96,7 +129,6 @@ func (s *Client) NewDocumentsRequestBody() DocumentsRequestBody {
 }
 
 type DocumentsRequestBody struct {
-	File string `json:"Filerrrr,omitempty"`
 }
 
 func (r *DocumentsRequest) RequestBody() *DocumentsRequestBody {
@@ -104,7 +136,7 @@ func (r *DocumentsRequest) RequestBody() *DocumentsRequestBody {
 }
 
 func (r *DocumentsRequest) RequestBodyInterface() any {
-	return r.requestBody
+	return nil
 }
 
 func (r *DocumentsRequest) SetRequestBody(body DocumentsRequestBody) {
@@ -115,7 +147,9 @@ func (r *DocumentsRequest) NewResponseBody() *DocumentsResponseBody {
 	return &DocumentsResponseBody{}
 }
 
-type DocumentsResponseBody Document
+type DocumentsResponseBody struct {
+	DocumentURI string `json:"DocumentURI"`
+}
 
 func (r *DocumentsRequest) URL() *url.URL {
 	u := r.client.GetEndpointURL("/documents", r.PathParams())
@@ -129,8 +163,8 @@ func (r *DocumentsRequest) Do(ctx context.Context) (DocumentsResponseBody, error
 		return *r.NewResponseBody(), err
 	}
 
-	req.Header.Set("Content-Disposition", `attachment; name="File"; filename="Invoice_0072: 58130.xml"`)
-	req.Header.Set("Content-Type", "application/xml")
+	req.Header.Add("Filename", r.FormParams().File.Filename)
+	req.Header.Set("Content-Disposition", fmt.Sprintf(`attachment; name="File"; filename="%s"`, r.FormParams().File.Filename))
 
 	// Process query parameters
 	err = utils.AddQueryParamsToRequest(r.QueryParams(), req, false)
@@ -139,6 +173,11 @@ func (r *DocumentsRequest) Do(ctx context.Context) (DocumentsResponseBody, error
 	}
 
 	responseBody := r.NewResponseBody()
-	_, err = r.client.Do(req, responseBody)
+	resp, err := r.client.Do(req, responseBody)
+
+	// we need the header location from the response to
+	// Location: urn:inexchangedocument:5d1f85b8-da11-4007-bf47-c756735bcb78
+	responseBody.DocumentURI = resp.Header.Get("Location")
+
 	return *responseBody, err
 }

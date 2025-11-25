@@ -4,16 +4,21 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"strings"
 	"testing"
 
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/omniboost/go-inexchange"
 )
 
 func TestDocuments(t *testing.T) {
 	client := client()
 
 	req := client.NewDocumentsRequest()
-	req.RequestBody().File = "UEsDBBQACAgIAK6ZkVIAAAAAAAAAAAAAAAAJABwAZmlsZTEudHh0VVQJAAPO1lFfztZRXXgLAAEEAAAAAAQAAAAAAABQSwMEFAACAAgAqpmRUgAAAAAAAAAAAAAAAAgAGABoAZmlsZTIudHh0VVQJAAPO1lFfztZRXXgLAAEEAAAAAAQAAAAAAABQSwECHgMUAAICAgArpmRUgAAAAAAAAAAAAAAAkAGAAAAAAAAAAAApIEAAAAAZmlsZTEudHh0VVQFAAPO1lFfXgLAAEEAAAAAAQAAAAAAABQSwECHgMUAAICAgAqpmRUgAAAAAAAAAAAAAAAgAGAAAAAAAAAAAApIEAAAAAZmlsZTIudHh0VVQFAAPO1lFfXgLAAEEAAAAAAQAAAAAAABQSwUGAAAAAAIAAgC9AAAAUQAAAAAA"
+	req.FormParams().File = inexchange.FormFile{
+		Filename: "test.csv",
+		Content:  strings.NewReader("asdafadaf"),
+	}
 
 	resp, err := req.Do(context.Background())
 	if err != nil {

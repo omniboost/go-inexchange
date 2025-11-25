@@ -96,62 +96,9 @@ func (s *Client) NewDocumentsOutboundRequestBody() DocumentsOutboundRequestBody 
 }
 
 type DocumentsOutboundRequestBody struct {
-	SendDocumentAs struct {
-		// - possible values: Paper, Electronic, Pdf, BusinessToConsumer
-		Type  string `json:"Type"`
-		Paper struct {
-			RecipientAddress struct {
-				Name        string `json:"Name"`
-				Department  string `json:"Department"`
-				StreetName  string `json:"StreetName"`
-				PostBox     string `json:"PostBox"`
-				PostalZone  string `json:"PostalZone"`
-				City        string `json:"City"`
-				CountryCode string `json:"CountryCode"`
-			} `json:"RecipientAddress"`
-			ReturnAddress struct {
-				Name        string `json:"Name"`
-				Department  string `json:"Department"`
-				StreetName  string `json:"StreetName"`
-				PostBox     string `json:"PostBox"`
-				PostalZone  string `json:"PostalZone"`
-				City        string `json:"City"`
-				CountryCode string `json:"CountryCode"`
-			} `json:"ReturnAddress"`
-		} `json:"Paper"`
-		Electronic struct {
-			RecipientID string `json:"RecipientId"`
-		} `json:"Electronic"`
-		Pdf struct {
-			RecipientEmail string `json:"RecipientEmail"`
-			RecipientName  string `json:"RecipientName"`
-			SenderEmail    string `json:"SenderEmail"`
-			SenderName     string `json:"SenderName"`
-		} `json:"Pdf"`
-		BusinessToConsumer struct {
-			FMI      string `json:"FMI"`
-			SSN      string `json:"SSN"`
-			Provider string `json:"Provider"`
-		} `json:"BusinessToConsumer"`
-	} `json:"SendDocumentAs"`
-	RecipientInformation struct {
-		GLN         string `json:"GLN"`
-		OrgNo       string `json:"OrgNo"`
-		VatNo       string `json:"VatNo"`
-		Name        string `json:"Name"`
-		RecipientNo string `json:"RecipientNo"`
-		CountryCode string `json:"CountryCode"`
-	} `json:"RecipientInformation"`
-	Document struct {
-		DocumentFormat         string   `json:"DocumentFormat"`
-		ErpDocumentID          string   `json:"ErpDocumentId"`
-		DocumentURI            string   `json:"DocumentUri"`
-		RenderedDocumentFormat string   `json:"RenderedDocumentFormat"`
-		RenderedDocumentURI    string   `json:"RenderedDocumentUri"`
-		Language               string   `json:"Language"`
-		Culture                string   `json:"Culture"`
-		Attachments            []string `json:"Attachments"`
-	} `json:"Document"`
+	SendDocumentAs       DocumentsOutboundSendDocumentAs       `json:"SendDocumentAs"`
+	RecipientInformation DocumentsOutboundRecipientInformation `json:"RecipientInformation"`
+	Document             DocumentsOutboundDocument             `json:"Document"`
 }
 
 func (r *DocumentsOutboundRequest) RequestBody() *DocumentsOutboundRequestBody {
@@ -173,7 +120,7 @@ func (r *DocumentsOutboundRequest) NewResponseBody() *DocumentsOutboundResponseB
 type DocumentsOutboundResponseBody struct{}
 
 func (r *DocumentsOutboundRequest) URL() *url.URL {
-	u := r.client.GetEndpointURL("/documents", r.PathParams())
+	u := r.client.GetEndpointURL("/documents/outbound", r.PathParams())
 	return &u
 }
 

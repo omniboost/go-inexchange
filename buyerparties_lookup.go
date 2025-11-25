@@ -130,7 +130,7 @@ type BuyerPartiesLookupRequestBody struct {
 	// Org number
 	OrgNo string `json:"orgNo,omitempty"`
 	// Vat number
-	VatNo string `json:"vatNo,omitempty"`
+	VATNo string `json:"vatNo,omitempty"`
 	// Peppol participant identifier, schema:idvalue
 	PeppolParticipantIdentifier string `json:"peppolParticipantIdentifier,omitempty"`
 	// Postal code. Use PostalZone instead. Will only be used if PostalZone isn’t set.
