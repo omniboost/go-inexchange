@@ -117,7 +117,9 @@ func (r *DocumentsOutboundRequest) NewResponseBody() *DocumentsOutboundResponseB
 	return &DocumentsOutboundResponseBody{}
 }
 
-type DocumentsOutboundResponseBody struct{}
+type DocumentsOutboundResponseBody struct {
+	Location string `json:"location"`
+}
 
 func (r *DocumentsOutboundRequest) URL() *url.URL {
 	u := r.client.GetEndpointURL("/documents/outbound", r.PathParams())
@@ -138,6 +140,14 @@ func (r *DocumentsOutboundRequest) Do(ctx context.Context) (DocumentsOutboundRes
 	}
 
 	responseBody := r.NewResponseBody()
-	_, err = r.client.Do(req, responseBody)
-	return *responseBody, err
+	resp, err := r.client.Do(req, responseBody)
+	if err != nil {
+		return *responseBody, err
+	}
+
+	// we need the header location from the response to
+	// Location: http://test-api:81/v1/api/documents/outbound/5cde2c1c-593f-4f19-a9b3-9a431efcce14
+	responseBody.Location = resp.Header.Get("Location")
+
+	return *responseBody, nil
 }
