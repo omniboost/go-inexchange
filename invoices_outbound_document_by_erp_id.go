@@ -125,7 +125,7 @@ func (r *InvoicesOutboundDocumentByERPIDRequest) NewResponseBody() *InvoicesOutb
 	return &InvoicesOutboundDocumentByERPIDResponseBody{}
 }
 
-type InvoicesOutboundDocumentByERPIDResponseBody Document
+type InvoicesOutboundDocumentByERPIDResponseBody OutboundDocument
 
 func (r *InvoicesOutboundDocumentByERPIDRequest) URL() *url.URL {
 	u := r.client.GetEndpointURL("/invoices/outbound/byerpid/{{.document_erp_id}}", r.PathParams())

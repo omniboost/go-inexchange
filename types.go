@@ -6,8 +6,6 @@ import (
 	"github.com/cydev/zero"
 )
 
-type Documents []Document
-
 type Document struct {
 	ID            string `json:"id"`
 	DocumentType  string `json:"documentType"`
@@ -16,6 +14,27 @@ type Document struct {
 		Time   time.Time `json:"time"`
 	} `json:"currentStatus"`
 	ErpDocumentID string `json:"erpDocumentId"`
+}
+
+type OutboundDocuments []OutboundDocument
+
+type OutboundDocument struct {
+	ID            string `json:"id"`
+	DocumentType  string `json:"documentType"`
+	CurrentStatus struct {
+		Status string    `json:"status"`
+		Time   time.Time `json:"time"`
+	} `json:"currentStatus"`
+	ErpDocumentID string `json:"erpDocumentId"`
+	StatusHistory []struct {
+		Status string    `json:"status"`
+		Time   time.Time `json:"time"`
+	} `json:"statusHistory"`
+	Error struct {
+		Message     string `json:"message"`
+		Status      string `json:"status"`
+		MoreInfoUri string `json:"moreInfoUri"`
+	} `json:"error"`
 }
 
 type Parties []Party

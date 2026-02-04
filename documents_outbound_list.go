@@ -132,8 +132,8 @@ func (r *DocumentsOutboundListRequest) NewResponseBody() *DocumentsOutboundListR
 }
 
 type DocumentsOutboundListResponseBody struct {
-	Documents  Documents `json:"documents"`
-	TotalCount int       `json:"totalCount"`
+	Documents  OutboundDocuments `json:"documents"`
+	TotalCount int               `json:"totalCount"`
 }
 
 func (r *DocumentsOutboundListRequest) URL() *url.URL {
